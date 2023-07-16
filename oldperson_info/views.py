@@ -1,10 +1,13 @@
 import json
+from datetime import datetime
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
+
+from sys_user.models import SysUser
 from .models import OldPersonInfo
 
 
@@ -29,7 +32,29 @@ def get_all_old_persons(request):
                 'username': old_person.username,
                 'gender': old_person.gender,
                 'phone': old_person.phone,
-                # 其他字段同理
+                'id_card': old_person.id_card,
+                'birthday': old_person.birthday,
+                'checkin_date': old_person.checkin_date,
+                'checkout_date': old_person.checkout_date,
+                'imgset_dir': old_person.imgset_dir,
+                'profile_photo': old_person.profile_photo,
+                'room_number': old_person.room_number,
+                'firstguardian_name': old_person.firstguardian_name,
+                'firstguardian_relationship': old_person.firstguardian_relationship,
+                'firstguardian_phone': old_person.firstguardian_phone,
+                'firstguardian_wechat': old_person.firstguardian_wechat,
+                'secondguardian_name': old_person.secondguardian_name,
+                'secondguardian_relationship': old_person.secondguardian_relationship,
+                'secondguardian_phone': old_person.secondguardian_phone,
+                'secondguardian_wechat': old_person.secondguardian_wechat,
+                'health_state': old_person.health_state,
+                'DESCRIPTION': old_person.DESCRIPTION,
+                'ISACTIVE': old_person.ISACTIVE,
+                'CREATED': old_person.CREATED,
+                'CREATEBY': old_person.CREATEBY,
+                'UPDATED': old_person.UPDATED,
+                'UPDATEBY': old_person.UPDATEBY,
+                'REMOVE': old_person.REMOVE,
             }
             old_persons_data.append(old_person_data)
 
@@ -148,10 +173,59 @@ def update_old_person(request, old_person_id):
         # 获取老人信息对象
         old_person = OldPersonInfo.objects.get(ID=old_person_id)
 
-        # 更新字段
-        old_person.username = username
-        old_person.gender = gender
-        old_person.phone = phone
+        # 只更新不为空的传入的字段
+        if username:
+            old_person.username = username
+        if gender:
+            old_person.gender = gender
+        if phone:
+            old_person.phone = phone
+        if id_card:
+            old_person.id_card = id_card
+        if birthday:
+            old_person.birthday = birthday
+        if checkin_date:
+            old_person.checkin_date = checkin_date
+        if checkout_date:
+            old_person.checkout_date = checkout_date
+        if imgset_dir:
+            old_person.imgset_dir = imgset_dir
+        if profile_photo:
+            old_person.profile_photo = profile_photo
+        if room_number:
+            old_person.room_number = room_number
+        if firstguardian_name:
+            old_person.firstguardian_name = firstguardian_name
+        if firstguardian_relationship:
+            old_person.firstguardian_relationship = firstguardian_relationship
+        if firstguardian_phone:
+            old_person.firstguardian_phone = firstguardian_phone
+        if firstguardian_wechat:
+            old_person.firstguardian_wechat = firstguardian_wechat
+        if secondguardian_name:
+            old_person.secondguardian_name = secondguardian_name
+        if secondguardian_relationship:
+            old_person.secondguardian_relationship = secondguardian_relationship
+        if secondguardian_phone:
+            old_person.secondguardian_phone = secondguardian_phone
+        if secondguardian_wechat:
+            old_person.secondguardian_wechat = secondguardian_wechat
+        if health_state:
+            old_person.health_state = health_state
+        if DESCRIPTION:
+            old_person.DESCRIPTION = DESCRIPTION
+        if ISACTIVE:
+            old_person.ISACTIVE = ISACTIVE
+        if CREATED:
+            old_person.CREATED = CREATED
+        if CREATEBY:
+            old_person.CREATEBY = CREATEBY
+        if UPDATED:
+            old_person.UPDATED = UPDATED
+        if UPDATEBY:
+            old_person.UPDATEBY = UPDATEBY
+        if REMOVE:
+            old_person.REMOVE = REMOVE
         # 其他字段同理
 
         # 保存更新
@@ -174,16 +248,35 @@ def get_old_person(request, old_person_id):
             'username': old_person.username,
             'gender': old_person.gender,
             'phone': old_person.phone,
-            # 其他字段同理
+            'id_card': old_person.id_card,
+            'birthday': old_person.birthday,
+            'checkin_date': old_person.checkin_date,
+            'checkout_date': old_person.checkout_date,
+            'imgset_dir': old_person.imgset_dir,
+            'profile_photo': old_person.profile_photo,
+            'room_number': old_person.room_number,
+            'firstguardian_name': old_person.firstguardian_name,
+            'firstguardian_relationship': old_person.firstguardian_relationship,
+            'firstguardian_phone': old_person.firstguardian_phone,
+            'firstguardian_wechat': old_person.firstguardian_wechat,
+            'secondguardian_name': old_person.secondguardian_name,
+            'secondguardian_relationship': old_person.secondguardian_relationship,
+            'secondguardian_phone': old_person.secondguardian_phone,
+            'secondguardian_wechat': old_person.secondguardian_wechat,
+            'health_state': old_person.health_state,
+            'DESCRIPTION': old_person.DESCRIPTION,
+            'ISACTIVE': old_person.ISACTIVE,
+            'CREATED': old_person.CREATED,
+            'CREATEBY': old_person.CREATEBY,
+            'UPDATED': old_person.UPDATED,
+            'UPDATEBY': old_person.UPDATEBY,
+            'REMOVE': old_person.REMOVE,
         }
 
         return JsonResponse({'old_person': old_person_data})
 
     except OldPersonInfo.DoesNotExist:
         return JsonResponse({'message': '老人信息不存在'})
-
-    # 处理其他HTTP方法
-    return JsonResponse({'message': 'Method not allowed'}, status=405)
 
 
 @csrf_exempt
@@ -203,3 +296,47 @@ def delete_old_person(request, old_person_id):
 
     # 处理其他HTTP方法
     return JsonResponse({'message': 'Method not allowed'}, status=405)
+
+
+def get_age(birthday):
+    # 获取当前日期
+    current_date = datetime.now()
+
+    # 如果生日为空，则返回0
+    if not birthday:
+        return 0
+
+    # 计算年龄
+    age = current_date.year - birthday.year
+
+    # 检查是否已过生日，如果未过生日则减去一年
+    if current_date.month < birthday.month or (
+            current_date.month == birthday.month and current_date.day < birthday.day):
+        age -= 1
+    return age
+
+
+def get_number(request):
+    if request.method == 'GET':
+        # 获取老人生日，计算所有人年龄
+        old_persons = OldPersonInfo.objects.all()
+        old_persons_age = []
+        for old_person in old_persons:
+            old_person_age = get_age(old_person.birthday)
+            old_persons_age.append(old_person_age)
+        # 根据年龄段计算老人数量，每十岁一个年龄段
+        old_person_age_stage = {}
+        for i in range(0, 10):
+            # 标注具体年龄段
+            age_stage = str(i * 10) + '-' + str((i + 1) * 10)
+            # 计算该年龄段的老人数量
+            old_person_age_stage[age_stage] = 0
+            old_person_age_stage['>= 100 ages'] = 0
+        for old_person_age in old_persons_age:
+            for i in range(0, 10):
+                if old_person_age >= i * 10 and old_person_age < (i + 1) * 10:
+                    old_person_age_stage[str(i * 10) + '-' + str((i + 1) * 10)] += 1
+                if old_person_age >= 100:
+                    old_person_age_stage['> 100 ages'] += 1
+        return JsonResponse({'old_person_age_stage': old_person_age_stage})
+
